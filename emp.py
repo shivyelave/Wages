@@ -60,9 +60,23 @@ def calculate_wage_of_employee():
         return 20 * 8  # Full-day attendance, wage for 8 hours at $20/hour
 
 
+def calculate_part_time_wage_of_employee():
+
+    """
+
+    Description:
+        Function to calculate the wage of an employee for part-time work.
+        This assumes a fixed part-time wage for 4 hours of work.
+
+    Returns:
+        int: The total wage for part-time work, calculated as 4 hours * $20/hour.
+    
+    """
+    
+    return 4 * 20  # Wage for 4 hours of work at $20 per hour
+
 def main():
-    # Call the employee_attendance function and print the result
-    print(calculate_wage_of_employee())
+    print(calculate_part_time_wage_of_employee())  # Print the calculated part-time wage
 
 # If this script is run as the main module, execute the main function
 if __name__ == '__main__':
