@@ -12,6 +12,11 @@
 
 import random
 
+wage_per_hr = 20
+full_day_working_hrs = 8
+half_day_working_hrs = 4
+
+
 def employee_attendance():
 
     """
@@ -57,7 +62,7 @@ def calculate_wage_of_employee():
         return 0  # No attendance, no wage
 
     if attendance == 1:
-        return 20 * 8  # Full-day attendance, wage for 8 hours at $20/hour
+        return full_day_working_hrs * wage_per_hr  # Full-day attendance, wage for 8 hours at $20/hour
 
 
 def calculate_part_time_wage_of_employee():
@@ -73,7 +78,7 @@ def calculate_part_time_wage_of_employee():
     
     """
     
-    return 4 * 20  # Wage for 4 hours of work at $20 per hour
+    return half_day_working_hrs * wage_per_hr  # Wage for 4 hours of work at $20 per hour
 
 def main():
     print(calculate_part_time_wage_of_employee())  # Print the calculated part-time wage
