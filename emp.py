@@ -94,24 +94,39 @@ def each_day_wage():
 def montly_wage():
     """
     Description:
-        Function to calculate the monthly wages by collecting daily wages for each day in the month.
+        Function to calculate the monthly wages by collecting daily wages for each day in the month,
+        considering attendance and hours worked.
 
     Returns:
         list: A list containing the wages for each day of the month.
     """
     month_wages = []  # Initialize an empty list to store the wages for each day of the month
+    day = hrs = 0     # Initialize counters for days and hours
+    curr_day = 0      # Initialize index for the current day in the month_wages list
     
     # Iterate through each day of the month and calculate the wage for that day
-    for _ in range(month):
+    while(day < month and hrs < 100):  # Continue until either the number of days reaches 'month' or total hours reach 100
         month_wages.append(each_day_wage())  # Append the wage of each day to the list
-    
-    return month_wages  # Return the list of monthly wages
+        
+        if month_wages[curr_day] == 0:
+            day += 1  # Increment day count if the wage is 0 (absent)
+            hrs += 0  # No hours added for absent days
+            curr_day += 1  # Move to the next day in the month_wages list
+        elif month_wages[curr_day] == full_day_working_hrs * wage_per_hr:
+            day += 1  # Increment day count for a full working day
+            hrs += 8  # Add 8 hours for a full working day
+            curr_day += 1  # Move to the next day in the month_wages list
+        else:
+            day += 1  # Increment day count for a half-working day
+            hrs += 4  # Add 4 hours for a half-working day
+            curr_day += 1  # Move to the next day in the month_wages list
 
+    return month_wages  # Return the list of monthly wages
 
 
 def main():
 
-    print(montly_wage())
+    print("Monthly wage:",sum(montly_wage()))
 
 
 # If this script is run as the main module, execute the main function
