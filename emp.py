@@ -15,6 +15,7 @@ import random
 wage_per_hr = 20  # Wage per hour
 full_day_working_hrs = 8  # Working hours for a full day
 half_day_working_hrs = 4  # Working hours for a half day
+month =20 # Working days in month
 
 def employee_attendance():
 
@@ -74,8 +75,7 @@ def calculate_part_time_wage_of_employee():
     
     return half_day_working_hrs * wage_per_hr  # Wage for 4 hours of work at $20 per hour
 
-def main():
-    
+def each_day_wage():
     # Get attendance status from employee_attendance function
     attendance = employee_attendance()
     
@@ -89,7 +89,30 @@ def main():
             wage = calculate_part_time_wage_of_employee()  # Half-day attendance
 
     # Print the calculated wage
-    print(wage)
+    return wage
+
+def montly_wage():
+    """
+    Description:
+        Function to calculate the monthly wages by collecting daily wages for each day in the month.
+
+    Returns:
+        list: A list containing the wages for each day of the month.
+    """
+    month_wages = []  # Initialize an empty list to store the wages for each day of the month
+    
+    # Iterate through each day of the month and calculate the wage for that day
+    for _ in range(month):
+        month_wages.append(each_day_wage())  # Append the wage of each day to the list
+    
+    return month_wages  # Return the list of monthly wages
+
+
+
+def main():
+
+    print(montly_wage())
+
 
 # If this script is run as the main module, execute the main function
 if __name__ == '__main__':
