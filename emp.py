@@ -216,15 +216,21 @@ class EmpWageBuilder():
             list: A list of lists, where each sublist contains the monthly wages for one company.
         
         """
-        
-        multiple_companies_wages = []
+
+        multiple_companies_wages = {}
         for company in self.companies_details:
             # Calculate monthly wages for each company and append to the list
             company_wage = CompanyEmpWages(company[0], company[1], company[2], company[3], company[4]).company_monthly_wage()
-            multiple_companies_wages.append(company_wage)
+            multiple_companies_wages[company[5]]=company_wage
         return multiple_companies_wages
 
-        
+    @staticmethod
+    def print_wage_dict(multiple_companies_wages):
+        keys = multiple_companies_wages.keys()
+        for key in keys:
+            print(f"{key}: {multiple_companies_wages[key]}")
+
+
 class CompanyEmpWages():
     
     def __init__(self, full_day_working_hrs=8, half_day_working_hrs=4, wage_per_hr=20, total_working_days=20, total_working_hrs=100):
@@ -271,25 +277,28 @@ def main():
 
     """
     # Create an EmpWageBuilder object with details for three companies
-    emplpoyee_wages = EmpWageBuilder([[8, 4, 20, 10, 50], [8, 4, 20, 20, 100], [8, 4, 20, 15, 75]]).all_companies_wages()
+    emplpoyee_wages = EmpWageBuilder([[8, 4, 20, 10, 50,"Apple"], [8, 4, 20, 20, 100,"Amazon"], [8, 4, 20, 15, 75,"Google"]]).all_companies_wages()
+
+    EmpWageBuilder.print_wage_dict(emplpoyee_wages)
 
     # Calculate monthly wages for employees in different companies
-    company1_emp1 = emplpoyee_wages[0]
-    company2_emp1 = emplpoyee_wages[1]
-    company3_emp1 = emplpoyee_wages[2]
+    
+    # company1_emp1 = emplpoyee_wages[0]
+    # company2_emp1 = emplpoyee_wages[1]
+    # company3_emp1 = emplpoyee_wages[2]
 
-    print(f"All companies wages: {emplpoyee_wages}\n\n")
-    # Print results for Company 1
-    print("First Company's Employee_1 wages:", company1_emp1)
-    print(f"Total Wage: {sum(company1_emp1)}")
+    # print(f"All companies wages: {emplpoyee_wages}\n\n")
+    # # Print results for Company 1
+    # print("First Company's Employee_1 wages:", company1_emp1)
+    # print(f"Total Wage: {sum(company1_emp1)}")
 
-    # Print results for Company 2
-    print("Second Company's Employee_1 wages:", company2_emp1)
-    print(f"Total Wage: {sum(company2_emp1)}")
+    # # Print results for Company 2
+    # print("Second Company's Employee_1 wages:", company2_emp1)
+    # print(f"Total Wage: {sum(company2_emp1)}")
 
-    # Print results for Company 3
-    print("Third Company's Employee_1 wages:", company3_emp1)
-    print(f"Total Wage: {sum(company3_emp1)}")
+    # # Print results for Company 3
+    # print("Third Company's Employee_1 wages:", company3_emp1)
+    # print(f"Total Wage: {sum(company3_emp1)}")
 
 # If this script is run as the main module, execute the main function
 if __name__ == '__main__':
