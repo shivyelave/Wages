@@ -13,9 +13,27 @@
 import random
 
 class Employee_monthly_wage:
-    
-    @staticmethod
-    def employee_attendance():
+
+    def __init__(self, full_day_working_hrs=8, half_day_working_hrs=4, wage_per_hr=20, total_working_days=20, total_working_hrs=100):
+        """
+        Description:
+            Initialize an Employee_monthly_wage object with given parameters.
+
+        Parameters:
+            full_day_working_hrs (int): Number of hours for a full working day.
+            half_day_working_hrs (int): Number of hours for a half working day.
+            wage_per_hr (int): Wage per hour.
+            total_working_days (int): Total number of working days in a month.
+            total_working_hrs (int): Total number of working hours in a month.
+        
+        """
+        self.full_day_working_hrs = full_day_working_hrs
+        self.half_day_working_hrs = half_day_working_hrs
+        self.wage_per_hr = wage_per_hr
+        self.total_working_days = total_working_days
+        self.total_working_hrs = total_working_hrs
+
+    def employee_attendance(self):
         """
         Description:
             Function to randomly determine an employee's attendance status.
@@ -25,74 +43,75 @@ class Employee_monthly_wage:
 
         Returns:
             int: A random choice representing attendance status (0, 1, or 2).
+        
         """
         # Randomly choose an attendance status from [0, 1, 2]
         attendance = random.choice([0, 1, 2])
         return attendance
 
-    @staticmethod
-    def calculate_wage_of_employee(attendance, full_day_working_hrs, wage_per_hr):
+    def calculate_wage_of_employee(self, attendance):
         """
         Description:
             Function to calculate the wage of an employee based on their attendance.
 
-        Parameter:
-            attendance: 0 or 1, i.e., employee present or not
+        Parameters:
+            attendance (int): Attendance status, where 0 represents absent and 1 represents present.
 
         Returns:
             int: The wage of the employee based on their attendance:
                 - 0 for no attendance
-                - Wage for full-day attendance
+                - Wage for full-day attendance if present
+        
         """
         if attendance == 0:
             return 0  # No attendance, no wage
         if attendance == 1:
-            return full_day_working_hrs * wage_per_hr  # Full-day attendance
+            return self.full_day_working_hrs * self.wage_per_hr  # Full-day attendance
 
-    @staticmethod
-    def calculate_part_time_wage_of_employee(half_day_working_hrs, wage_per_hr):
+    def calculate_part_time_wage_of_employee(self):
         """
         Description:
             Function to calculate the wage of an employee for part-time work.
-            This assumes a fixed part-time wage for 4 hours of work.
+            This assumes a fixed part-time wage for half-day work.
 
         Returns:
-            int: The total wage for part-time work, calculated as 4 hours * wage_per_hr.
+            int: The total wage for part-time work, calculated as half_day_working_hrs * wage_per_hr.
+        
         """
-        return half_day_working_hrs * wage_per_hr  # Wage for part-time work
+        return self.half_day_working_hrs * self.wage_per_hr  # Wage for part-time work
 
-    @staticmethod
-    def each_day_wage(full_day_working_hrs, half_day_working_hrs, wage_per_hr):
+    def each_day_wage(self):
         """
         Description:
             Function to calculate the daily wage based on attendance status.
-        
+
         Returns:
             int: The wage for that particular day based on attendance.
+        
         """
         # Get attendance status from employee_attendance function
-        attendance = Employee_monthly_wage.employee_attendance()
+        attendance = self.employee_attendance()
         
         # Calculate wage based on attendance status using pattern matching
         match attendance:
             case 0:
-                wage = Employee_monthly_wage.calculate_wage_of_employee(attendance, full_day_working_hrs, wage_per_hr)  # No attendance
+                wage = self.calculate_wage_of_employee(attendance)  # No attendance
             case 1:
-                wage = Employee_monthly_wage.calculate_wage_of_employee(attendance, full_day_working_hrs, wage_per_hr)  # Full-day attendance
+                wage = self.calculate_wage_of_employee(attendance)  # Full-day attendance
             case 2:
-                wage = Employee_monthly_wage.calculate_part_time_wage_of_employee(half_day_working_hrs, wage_per_hr)  # Half-day attendance
+                wage = self.calculate_part_time_wage_of_employee()  # Half-day attendance
 
         # Return the calculated wage
         return wage
 
-    @staticmethod
-    def montly_wage(month, full_day_working_hrs, half_day_working_hrs, wage_per_hr, total_working_hrs):
+    def montly_wage(self):
         """
         Description:
             Function to calculate the monthly wages by collecting daily wages for each day in the month.
 
         Returns:
             list: A list containing the wages for each day of the month.
+        
         """
         # Initialize an empty list to store the wages for each day of the month
         month_wages = []
@@ -100,31 +119,82 @@ class Employee_monthly_wage:
         curr_day = 0      # Initialize index for the current day in the month_wages list
         
         # Iterate through each day of the month and calculate the wage for that day
-        while day < month and hrs < total_working_hrs:  # Continue until either the number of days reaches 'month' or total hours reach limit
-            month_wages.append(Employee_monthly_wage.each_day_wage(full_day_working_hrs, half_day_working_hrs, wage_per_hr))  # Append the wage of each day to the list
+        while day < self.total_working_days and hrs < self.total_working_hrs:  # Continue until either the number of days reaches 'total_working_days' or total hours reach 'total_working_hrs'
+            month_wages.append(self.each_day_wage())  # Append the wage of each day to the list
             
             if month_wages[curr_day] == 0:
                 day += 1  # Increment day count if the wage is 0 (absent)
                 hrs += 0  # No hours added for absent days
                 curr_day += 1  # Move to the next day in the month_wages list
-            elif month_wages[curr_day] == full_day_working_hrs * wage_per_hr:
+            elif month_wages[curr_day] == self.full_day_working_hrs * self.wage_per_hr:
                 day += 1  # Increment day count for a full working day
-                hrs += full_day_working_hrs  # Add full hours for a full working day
+                hrs += self.full_day_working_hrs  # Add full hours for a full working day
                 curr_day += 1  # Move to the next day in the month_wages list
             else:
                 day += 1  # Increment day count for a half-working day
-                hrs += half_day_working_hrs  # Add hours for a half-working day
+                hrs += self.half_day_working_hrs  # Add hours for a half-working day
                 curr_day += 1  # Move to the next day in the month_wages list
 
-        return month_wages  # Return the list of monthly wages
+        # Return the list of monthly wages
+        return month_wages
+    
+    @staticmethod
+    def count_leave_half_full_days(month_wages):
+        """
+        Description:
+            Function to count the number of leave days, full days, and half days based on monthly wage data.
+
+        Parameters:
+            month_wages (list): A list of daily wages for the month.
+
+        Returns:
+            list: A list containing three integers:
+                - Number of leave days (absent days)
+                - Number of full days
+                - Number of half days
+        
+        """
+        half_day = full_day = leaves = 0
+        for day in month_wages:
+            if day == 0:
+                leaves += 1
+            elif day == max(month_wages):
+                full_day += 1
+            else:
+                half_day += 1
+        return [leaves, full_day, half_day]
 
 def main():
-    company1 = Employee_monthly_wage.montly_wage(10, 8, 4, 20, 50)
-    company2 = Employee_monthly_wage.montly_wage(20, 8, 4, 20, 100)
-    company3 = Employee_monthly_wage.montly_wage(15, 8, 4, 20, 75)
-    print("First Company's Employee wages:", company1)
-    print("Second Company's Employee wages:", company2)
-    print("Third Company's Employee wages:", company3)
+    """
+    Description:
+        Main function to create instances of Employee_monthly_wage and print monthly wages for different companies.
+
+    """
+    EmpMonthlyWage_company1 = Employee_monthly_wage(8, 4, 20, 10, 50)
+    EmpMonthlyWage_company2 = Employee_monthly_wage(8, 4, 20, 20, 100)
+    EmpMonthlyWage_company3 = Employee_monthly_wage(8, 4, 20, 15, 75)
+    
+    # Calculate monthly wages for employees in different companies
+    company1_emp1 = EmpMonthlyWage_company1.montly_wage()
+
+    company2_emp1 = EmpMonthlyWage_company2.montly_wage()
+
+    company3_emp1 = EmpMonthlyWage_company3.montly_wage()
+
+    
+    # Print results for Company 1
+    print("First Company's Employee_1 wages:", company1_emp1)
+    print(f"Total Wage: {sum(company1_emp1)}")
+
+
+    # Print results for Company 2
+    print("Second Company's Employee_1 wages:", company2_emp1)
+    print(f"Total Wage: {sum(company2_emp1)}")
+
+    # Print results for Company 3
+    print("Third Company's Employee_1 wages:", company3_emp1)
+    print(f"Total Wage: {sum(company3_emp1)}")
+
 
 # If this script is run as the main module, execute the main function
 if __name__ == '__main__':
