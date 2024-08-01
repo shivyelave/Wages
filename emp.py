@@ -11,11 +11,14 @@
 '''
 
 import random
+from abc import abstractmethod ,ABC
 
 class Employee_monthly_wage:
 
     def __init__(self, full_day_working_hrs=8, half_day_working_hrs=4, wage_per_hr=20, total_working_days=20, total_working_hrs=100):
+        
         """
+        
         Description:
             Initialize an Employee_monthly_wage object with given parameters.
 
@@ -26,6 +29,7 @@ class Employee_monthly_wage:
             total_working_days (int): Total number of working days in a month.
             total_working_hrs (int): Total number of working hours in a month.
         
+        
         """
         self.full_day_working_hrs = full_day_working_hrs
         self.half_day_working_hrs = half_day_working_hrs
@@ -34,7 +38,9 @@ class Employee_monthly_wage:
         self.total_working_hrs = total_working_hrs
 
     def employee_attendance(self):
+        
         """
+        
         Description:
             Function to randomly determine an employee's attendance status.
             0: Absent
@@ -44,13 +50,17 @@ class Employee_monthly_wage:
         Returns:
             int: A random choice representing attendance status (0, 1, or 2).
         
+        
         """
+        
         # Randomly choose an attendance status from [0, 1, 2]
         attendance = random.choice([0, 1, 2])
         return attendance
 
     def calculate_wage_of_employee(self, attendance):
+        
         """
+        
         Description:
             Function to calculate the wage of an employee based on their attendance.
 
@@ -63,13 +73,16 @@ class Employee_monthly_wage:
                 - Wage for full-day attendance if present
         
         """
+        
         if attendance == 0:
             return 0  # No attendance, no wage
         if attendance == 1:
             return self.full_day_working_hrs * self.wage_per_hr  # Full-day attendance
 
     def calculate_part_time_wage_of_employee(self):
+        
         """
+        
         Description:
             Function to calculate the wage of an employee for part-time work.
             This assumes a fixed part-time wage for half-day work.
@@ -77,18 +90,24 @@ class Employee_monthly_wage:
         Returns:
             int: The total wage for part-time work, calculated as half_day_working_hrs * wage_per_hr.
         
+        
         """
+        
         return self.half_day_working_hrs * self.wage_per_hr  # Wage for part-time work
 
     def each_day_wage(self):
+        
         """
+        
         Description:
             Function to calculate the daily wage based on attendance status.
 
         Returns:
             int: The wage for that particular day based on attendance.
         
+        
         """
+        
         # Get attendance status from employee_attendance function
         attendance = self.employee_attendance()
         
@@ -105,14 +124,18 @@ class Employee_monthly_wage:
         return wage
 
     def montly_wage(self):
+        
         """
+        
         Description:
             Function to calculate the monthly wages by collecting daily wages for each day in the month.
 
         Returns:
             list: A list containing the wages for each day of the month.
         
+        
         """
+        
         # Initialize an empty list to store the wages for each day of the month
         month_wages = []
         day = hrs = 0     # Initialize counters for days and hours
@@ -140,7 +163,9 @@ class Employee_monthly_wage:
     
     @staticmethod
     def count_leave_half_full_days(month_wages):
+        
         """
+        
         Description:
             Function to count the number of leave days, full days, and half days based on monthly wage data.
 
@@ -154,6 +179,7 @@ class Employee_monthly_wage:
                 - Number of half days
         
         """
+        
         half_day = full_day = leaves = 0
         for day in month_wages:
             if day == 0:
@@ -164,9 +190,11 @@ class Employee_monthly_wage:
                 half_day += 1
         return [leaves, full_day, half_day]
     
-class EmpWageBuilder:
+class EmpWageBuilder(ABC):
     def __init__(self, companies_details):
+        
         """
+        
         Description:
             Initialize an EmpWageBuilder object with details for multiple companies.
 
@@ -174,28 +202,25 @@ class EmpWageBuilder:
             companies_details (list): A list of company details, where each detail is a list with parameters for CompanyEmpWages.
         
         """
+        
         self.companies_details = companies_details
-
-    def all_companies_wages(self):
+    
+    @abstractmethod
+    def all_companies_wages(self,companies_details):
         """
         Description:
             Function to calculate and return the monthly wages for all companies.
-
-        Returns:
-            list: A list of lists, where each sublist contains the monthly wages for one company.
         
         """
-        multiple_companies_wages = []
-        for company in self.companies_details:
-            # Calculate monthly wages for each company and append to the list
-            company_wage = CompanyEmpWages(company[0], company[1], company[2], company[3], company[4]).company_monthly_wage()
-            multiple_companies_wages.append(company_wage)
-        return multiple_companies_wages
 
-class CompanyEmpWages:
+        pass
+        
+class CompanyEmpWages(EmpWageBuilder):
     
     def __init__(self, full_day_working_hrs=8, half_day_working_hrs=4, wage_per_hr=20, total_working_days=20, total_working_hrs=100):
+        
         """
+        
         Description:
             Initialize a CompanyEmpWages object with the given parameters.
 
@@ -214,7 +239,9 @@ class CompanyEmpWages:
         self.total_working_hrs = total_working_hrs
 
     def company_monthly_wage(self):
+        
         """
+        
         Description:
             Function to calculate the company's monthly wage by creating an Employee_monthly_wage object.
 
@@ -222,9 +249,28 @@ class CompanyEmpWages:
             list: A list containing the wages for each day of the month.
         
         """
+        
         # Calculate the monthly wages by using Employee_monthly_wage
         monthly_wage = Employee_monthly_wage(self.full_day_working_hrs, self.half_day_working_hrs, self.wage_per_hr, self.total_working_days, self.total_working_hrs).montly_wage()
         return monthly_wage
+    def all_companies_wages(self,companies_details):
+        
+        """
+        
+        Description:
+            Function to calculate and return the monthly wages for all companies.
+
+        Returns:
+            list: A list of lists, where each sublist contains the monthly wages for one company.
+        
+        """
+        
+        multiple_companies_wages = []
+        for company in companies_details:
+            # Calculate monthly wages for each company and append to the list
+            company_wage = CompanyEmpWages(company[0], company[1], company[2], company[3], company[4]).company_monthly_wage()
+            multiple_companies_wages.append(company_wage)
+        return multiple_companies_wages
 
 def main():
     """
@@ -233,7 +279,7 @@ def main():
 
     """
     # Create an EmpWageBuilder object with details for three companies
-    emplpoyee_wages = EmpWageBuilder([[8, 4, 20, 10, 50], [8, 4, 20, 20, 100], [8, 4, 20, 15, 75]]).all_companies_wages()
+    emplpoyee_wages = CompanyEmpWages().all_companies_wages([[8, 4, 20, 10, 50], [8, 4, 20, 20, 100], [8, 4, 20, 15, 75]])
 
     # Calculate monthly wages for employees in different companies
     company1_emp1 = emplpoyee_wages[0]
