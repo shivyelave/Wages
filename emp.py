@@ -190,7 +190,7 @@ class Employee_monthly_wage:
                 half_day += 1
         return [leaves, full_day, half_day]
     
-class EmpWageBuilder(ABC):
+class EmpWageBuilder():
     def __init__(self, companies_details):
         
         """
@@ -205,17 +205,27 @@ class EmpWageBuilder(ABC):
         
         self.companies_details = companies_details
     
-    @abstractmethod
-    def all_companies_wages(self,companies_details):
+    def all_companies_wages(self):
+        
         """
+        
         Description:
             Function to calculate and return the monthly wages for all companies.
+
+        Returns:
+            list: A list of lists, where each sublist contains the monthly wages for one company.
         
         """
-
-        pass
         
-class CompanyEmpWages(EmpWageBuilder):
+        multiple_companies_wages = []
+        for company in self.companies_details:
+            # Calculate monthly wages for each company and append to the list
+            company_wage = CompanyEmpWages(company[0], company[1], company[2], company[3], company[4]).company_monthly_wage()
+            multiple_companies_wages.append(company_wage)
+        return multiple_companies_wages
+
+        
+class CompanyEmpWages():
     
     def __init__(self, full_day_working_hrs=8, half_day_working_hrs=4, wage_per_hr=20, total_working_days=20, total_working_hrs=100):
         
@@ -253,24 +263,6 @@ class CompanyEmpWages(EmpWageBuilder):
         # Calculate the monthly wages by using Employee_monthly_wage
         monthly_wage = Employee_monthly_wage(self.full_day_working_hrs, self.half_day_working_hrs, self.wage_per_hr, self.total_working_days, self.total_working_hrs).montly_wage()
         return monthly_wage
-    def all_companies_wages(self,companies_details):
-        
-        """
-        
-        Description:
-            Function to calculate and return the monthly wages for all companies.
-
-        Returns:
-            list: A list of lists, where each sublist contains the monthly wages for one company.
-        
-        """
-        
-        multiple_companies_wages = []
-        for company in companies_details:
-            # Calculate monthly wages for each company and append to the list
-            company_wage = CompanyEmpWages(company[0], company[1], company[2], company[3], company[4]).company_monthly_wage()
-            multiple_companies_wages.append(company_wage)
-        return multiple_companies_wages
 
 def main():
     """
@@ -279,13 +271,14 @@ def main():
 
     """
     # Create an EmpWageBuilder object with details for three companies
-    emplpoyee_wages = CompanyEmpWages().all_companies_wages([[8, 4, 20, 10, 50], [8, 4, 20, 20, 100], [8, 4, 20, 15, 75]])
+    emplpoyee_wages = EmpWageBuilder([[8, 4, 20, 10, 50], [8, 4, 20, 20, 100], [8, 4, 20, 15, 75]]).all_companies_wages()
 
     # Calculate monthly wages for employees in different companies
     company1_emp1 = emplpoyee_wages[0]
     company2_emp1 = emplpoyee_wages[1]
     company3_emp1 = emplpoyee_wages[2]
 
+    print(f"All companies wages: {emplpoyee_wages}\n\n")
     # Print results for Company 1
     print("First Company's Employee_1 wages:", company1_emp1)
     print(f"Total Wage: {sum(company1_emp1)}")
