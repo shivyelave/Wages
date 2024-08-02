@@ -242,6 +242,7 @@ class EmpWageBuilder():
                 total_sum += sum(multiple_companies_wages[key][emp_key])
             print(f"{key} total wage is {total_sum}\n\n")
 
+
 class CompanyEmpWages():
     
     def __init__(self, full_day_working_hrs=8, half_day_working_hrs=4, wage_per_hr=20, total_working_days=20, total_working_hrs=100,number_of_employees =1):
