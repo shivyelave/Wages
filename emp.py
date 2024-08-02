@@ -220,7 +220,7 @@ class EmpWageBuilder():
         multiple_companies_wages = {}
         for company in self.companies_details:
             # Calculate monthly wages for each company and append to the list
-            company_wage = CompanyEmpWages(company[0], company[1], company[2], company[3], company[4]).company_monthly_wage()
+            company_wage = CompanyEmpWages(company[0], company[1], company[2], company[3], company[4],company[6]).company_monthly_wage()
             multiple_companies_wages[company[5]]=company_wage
         return multiple_companies_wages
 
@@ -228,12 +228,14 @@ class EmpWageBuilder():
     def print_wage_dict(multiple_companies_wages):
         keys = multiple_companies_wages.keys()
         for key in keys:
-            print(f"{key}: {multiple_companies_wages[key]}")
-
+            print(f"{key}: ")
+            emp_keys = multiple_companies_wages[key].keys()
+            for emp_key in emp_keys:
+                print(f"    {emp_key}: {multiple_companies_wages[key][emp_key]} ")              
 
 class CompanyEmpWages():
     
-    def __init__(self, full_day_working_hrs=8, half_day_working_hrs=4, wage_per_hr=20, total_working_days=20, total_working_hrs=100):
+    def __init__(self, full_day_working_hrs=8, half_day_working_hrs=4, wage_per_hr=20, total_working_days=20, total_working_hrs=100,number_of_employees =1):
         
         """
         
@@ -246,6 +248,7 @@ class CompanyEmpWages():
             wage_per_hr (int): Wage per hour.
             total_working_days (int): Total number of working days in a month.
             total_working_hrs (int): Total number of working hours in a month.
+            number_of_employees (int): Total number of employees.
         
         """
         self.full_day_working_hrs = full_day_working_hrs
@@ -253,6 +256,7 @@ class CompanyEmpWages():
         self.wage_per_hr = wage_per_hr
         self.total_working_days = total_working_days
         self.total_working_hrs = total_working_hrs
+        self.number_of_employees = number_of_employees
 
     def company_monthly_wage(self):
         
@@ -265,9 +269,14 @@ class CompanyEmpWages():
             list: A list containing the wages for each day of the month.
         
         """
-        
+        monthly_wage ={}
+        keys = []
         # Calculate the monthly wages by using Employee_monthly_wage
-        monthly_wage = Employee_monthly_wage(self.full_day_working_hrs, self.half_day_working_hrs, self.wage_per_hr, self.total_working_days, self.total_working_hrs).montly_wage()
+        for i in range(self.number_of_employees):
+            i = str(i+1)
+            keys.append("Employee "+i)
+        for key in keys:
+            monthly_wage[key]=Employee_monthly_wage(self.full_day_working_hrs, self.half_day_working_hrs, self.wage_per_hr, self.total_working_days, self.total_working_hrs).montly_wage()
         return monthly_wage
 
 def main():
@@ -277,29 +286,11 @@ def main():
 
     """
     # Create an EmpWageBuilder object with details for three companies
-    emplpoyee_wages = EmpWageBuilder([[8, 4, 20, 10, 50,"Apple"], [8, 4, 20, 20, 100,"Amazon"], [8, 4, 20, 15, 75,"Google"]]).all_companies_wages()
+    emplpoyee_wages = EmpWageBuilder([[8, 4, 20, 10, 50,"Apple",4], [8, 4, 20, 20, 100,"Amazon",5], [8, 4, 20, 15, 75,"Google",4]]).all_companies_wages()
 
     EmpWageBuilder.print_wage_dict(emplpoyee_wages)
 
-    # Calculate monthly wages for employees in different companies
     
-    # company1_emp1 = emplpoyee_wages[0]
-    # company2_emp1 = emplpoyee_wages[1]
-    # company3_emp1 = emplpoyee_wages[2]
-
-    # print(f"All companies wages: {emplpoyee_wages}\n\n")
-    # # Print results for Company 1
-    # print("First Company's Employee_1 wages:", company1_emp1)
-    # print(f"Total Wage: {sum(company1_emp1)}")
-
-    # # Print results for Company 2
-    # print("Second Company's Employee_1 wages:", company2_emp1)
-    # print(f"Total Wage: {sum(company2_emp1)}")
-
-    # # Print results for Company 3
-    # print("Third Company's Employee_1 wages:", company3_emp1)
-    # print(f"Total Wage: {sum(company3_emp1)}")
-
 # If this script is run as the main module, execute the main function
 if __name__ == '__main__':
     main()
