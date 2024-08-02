@@ -228,11 +228,20 @@ class EmpWageBuilder():
     def print_wage_dict(multiple_companies_wages):
         keys = multiple_companies_wages.keys()
         for key in keys:
-
+            total_sum =0
             print(f"{key}: ")
             emp_keys = multiple_companies_wages[key].keys()
             for emp_key in emp_keys:
-                print(f"    {emp_key}: {multiple_companies_wages[key][emp_key]} ")              
+                print(f"    {emp_key}: {multiple_companies_wages[key][emp_key]} ") 
+                print(f"    Total Wage: {sum(multiple_companies_wages[key][emp_key])} ")
+                work_details = Employee_monthly_wage.count_leave_half_full_days(multiple_companies_wages[key][emp_key])
+                print(f"    Attendance:")
+                print(f"        Leaves: {work_details[0]}")
+                print(f"        Full Day: {work_details[1]}")
+                print(f"        Half Day: {work_details[2]}\n")
+                total_sum += sum(multiple_companies_wages[key][emp_key])
+            print(f"{key} total wage is {total_sum}\n\n")
+
 
 class CompanyEmpWages():
     
