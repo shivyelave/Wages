@@ -228,11 +228,9 @@ class EmpWageBuilder():
     def print_wage_dict(multiple_companies_wages):
         keys = multiple_companies_wages.keys()
         for key in keys:
+            print(f"{key}: {multiple_companies_wages[key]}")
+            print(f"Total wage of {key} is {sum(multiple_companies_wages[key])}\n")
 
-            print(f"{key}: ")
-            emp_keys = multiple_companies_wages[key].keys()
-            for emp_key in emp_keys:
-                print(f"    {emp_key}: {multiple_companies_wages[key][emp_key]} ")              
 
 class CompanyEmpWages():
     
