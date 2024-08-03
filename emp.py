@@ -325,62 +325,62 @@ def main():
         if operation == 1:
             # Adding new company and employees
             company_name = input("Enter Company name: ")
-            
+
             try:
                 emp_per_hrs = int(input("Enter employee wages per hr: "))  # Input for employee wages per hour
             except ValueError:
                 print("Enter a valid number.")  # Print error message if input is invalid
                 continue  # Skip the rest of the loop and prompt for operation again
-            
+
             try:
                 number_of_employee = int(input("Enter number of employees: "))  # Input for number of employees
             except ValueError:
                 print("Enter a valid number.")  # Print error message if input is invalid
                 continue  # Skip the rest of the loop and prompt for operation again
-            
+
             all_emp_details = []  # List to store employee details for the new company
-            
+
             # Get existing employee names if the company already exists
             if company_name in all_company_emp_details:
-                existing_employees = {emp["Name"] for emp in all_company_emp_details[company_name]}
+                existing_employees = {emp["Name"].lower() for emp in all_company_emp_details[company_name]}
             else:
                 existing_employees = set()  # Initialize as empty set if company does not exist
-            
+
             for _ in range(number_of_employee):
-                employee_name = input("\nEmployee Name: ")
-                
-                if employee_name in existing_employees:
+                employee_name = input("\nEmployee Name: ").strip()
+
+                if employee_name.lower() in existing_employees:
                     print(f"Employee name '{employee_name}' already exists in the company.")  # Print message if employee already exists
                     continue  # Skip to next iteration
-                
+
                 # Create a new dictionary for each employee
                 emp_details = {
                     "Name": employee_name,
                     "wages_per_hrs": emp_per_hrs
                 }
                 all_emp_details.append(emp_details)  # Add employee details to the list
-                existing_employees.add(employee_name)  # Add employee name to the set
-            
+                existing_employees.add(employee_name.lower())  # Add employee name to the set (converted to lowercase for consistency)
+
             # Add the company's employee details to the main dictionary
             if company_name in all_company_emp_details:
                 all_company_emp_details[company_name].extend(all_emp_details)  # Extend existing list if company exists
             else:
                 all_company_emp_details[company_name] = all_emp_details  # Add new entry for new company
-            
+
             # Print all company and employee details
             print(json.dumps(all_company_emp_details, indent=4))
-            
+
             # Update the argument list with new company data
             argument = []
             for company_name, company_employee in all_company_emp_details.items():
                 each_company = [8, 4, 0, 20, 100, '', []]
                 each_company[5] = company_name  # Set company name
-                
+
                 for employee in company_employee:
                     each_company[2] = employee["wages_per_hrs"]  # Set wages per hour
                     each_company[6].append(employee["Name"])  # Add employee name to the list
                 argument.append(each_company)  # Add company details to the argument list
-            
+
             argument = unique(argument)  # Remove duplicate entries from argument list
             employee_wages = EmpWageBuilder(argument).all_companies_wages()
             EmpWageBuilder.print_wage_dict(employee_wages)
