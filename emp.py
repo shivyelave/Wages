@@ -12,6 +12,7 @@
 
 import random
 from abc import abstractmethod ,ABC
+import json
 
 class Employee_monthly_wage:
 
@@ -245,7 +246,7 @@ class EmpWageBuilder():
 
 class CompanyEmpWages():
     
-    def __init__(self, full_day_working_hrs=8, half_day_working_hrs=4, wage_per_hr=20, total_working_days=20, total_working_hrs=100,number_of_employees =1):
+    def __init__(self, full_day_working_hrs=8, half_day_working_hrs=4, wage_per_hr=20, total_working_days=20, total_working_hrs=100,number_of_employees =[]):
         
         """
         
@@ -280,11 +281,8 @@ class CompanyEmpWages():
         
         """
         monthly_wage ={}
-        keys = []
-        # Calculate the monthly wages by using Employee_monthly_wage
-        for i in range(self.number_of_employees):
-            i = str(i+1)
-            keys.append("Employee "+i)
+        keys = self.number_of_employees
+
         for key in keys:
             monthly_wage[key]=Employee_monthly_wage(self.full_day_working_hrs, self.half_day_working_hrs, self.wage_per_hr, self.total_working_days, self.total_working_hrs).montly_wage()
         return monthly_wage
@@ -296,9 +294,207 @@ def main():
 
     """
     # Create an EmpWageBuilder object with details for three companies
-    emplpoyee_wages = EmpWageBuilder([[8, 4, 20, 10, 50,"Apple",4], [8, 4, 20, 20, 100,"Amazon",5], [8, 4, 20, 15, 75,"Google",4]]).all_companies_wages()
+        
+    exit = True  # Flag to control the exit of the loop
+    all_company_emp_details = {}  # Dictionary to store all company and employee details
+    argument = []  # List to store company details for processing
 
-    EmpWageBuilder.print_wage_dict(emplpoyee_wages)
+    def unique(argument):
+        """
+        Function to remove duplicate company entries from the argument list.
+        """
+        new_argument = []  # List to store unique company entries
+        for company in argument:
+            if company not in new_argument:  # Check if the company is already in the new list
+                new_argument.append(company)  # Add unique company entry to the new list
+        return new_argument  # Return the list of unique companies
+
+    while exit:
+        try:
+            # Prompt user to select an operation
+            operation = int(input("\n\nEnter 1 to add Company and Employee \nEnter 2 to delete Employee or company \nEnter 3 to update Company or Employee Details \nEnter 4 to exit.\n:"))
+            
+            # Validate the operation input
+            if operation < 1 or operation > 4:
+                raise ValueError("Enter a valid number between 1 and 4.")
+            
+        except ValueError as ve:
+            print(ve)  # Print error message if input is invalid
+            continue  # Skip the rest of the loop and prompt for operation again
+
+        if operation == 1:
+            # Adding new company and employees
+            company_name = input("Enter Company name: ")
+            
+            try:
+                emp_per_hrs = int(input("Enter employee wages per hr: "))  # Input for employee wages per hour
+            except ValueError:
+                print("Enter a valid number.")  # Print error message if input is invalid
+                continue  # Skip the rest of the loop and prompt for operation again
+            
+            try:
+                number_of_employee = int(input("Enter number of employees: "))  # Input for number of employees
+            except ValueError:
+                print("Enter a valid number.")  # Print error message if input is invalid
+                continue  # Skip the rest of the loop and prompt for operation again
+            
+            all_emp_details = []  # List to store employee details for the new company
+            
+            # Get existing employee names if the company already exists
+            if company_name in all_company_emp_details:
+                existing_employees = {emp["Name"] for emp in all_company_emp_details[company_name]}
+            else:
+                existing_employees = set()  # Initialize as empty set if company does not exist
+            
+            for _ in range(number_of_employee):
+                employee_name = input("\nEmployee Name: ")
+                
+                if employee_name in existing_employees:
+                    print(f"Employee name '{employee_name}' already exists in the company.")  # Print message if employee already exists
+                    continue  # Skip to next iteration
+                
+                # Create a new dictionary for each employee
+                emp_details = {
+                    "Name": employee_name,
+                    "wages_per_hrs": emp_per_hrs
+                }
+                all_emp_details.append(emp_details)  # Add employee details to the list
+                existing_employees.add(employee_name)  # Add employee name to the set
+            
+            # Add the company's employee details to the main dictionary
+            if company_name in all_company_emp_details:
+                all_company_emp_details[company_name].extend(all_emp_details)  # Extend existing list if company exists
+            else:
+                all_company_emp_details[company_name] = all_emp_details  # Add new entry for new company
+            
+            # Print all company and employee details
+            print(json.dumps(all_company_emp_details, indent=4))
+            
+            # Update the argument list with new company data
+            argument = []
+            for company_name, company_employee in all_company_emp_details.items():
+                each_company = [8, 4, 0, 20, 100, '', []]
+                each_company[5] = company_name  # Set company name
+                
+                for employee in company_employee:
+                    each_company[2] = employee["wages_per_hrs"]  # Set wages per hour
+                    each_company[6].append(employee["Name"])  # Add employee name to the list
+                argument.append(each_company)  # Add company details to the argument list
+            
+            argument = unique(argument)  # Remove duplicate entries from argument list
+            employee_wages = EmpWageBuilder(argument).all_companies_wages()
+            EmpWageBuilder.print_wage_dict(employee_wages)
+
+        elif operation == 2:
+            # Deleting company or employee
+            try:
+                delete = int(input("Enter 1 to delete company and 2 to delete employee: "))  # Input to choose deletion type
+                company_name = input("Enter Company name to delete: ")  # Input for company name
+                
+                if delete == 1:
+                    # Remove company and update argument
+                    all_company_emp_details.pop(company_name, None)  # Remove company from dictionary
+                    argument = [comp for comp in argument if comp[5] != company_name]  # Update argument list
+                    print("Company removed.")  # Print confirmation message
+                    
+                elif delete == 2:
+                    # Deleting specific employee
+                    employee_name = input("Enter Employee name to delete: ")  # Input for employee name
+                    
+                    for company in argument:
+                        if company[5] == company_name:
+                            if employee_name in company[6]:
+                                company[6].remove(employee_name)  # Remove employee from argument list
+                                print("Employee removed.")  # Print confirmation message
+                                
+                                # Update the main dictionary
+                                for emp in all_company_emp_details[company_name]:
+                                    if emp["Name"] == employee_name:
+                                        all_company_emp_details[company_name].remove(emp)  # Remove employee from company details
+                                        print(json.dumps(all_company_emp_details, indent=4))
+                                        employee_wages = EmpWageBuilder(argument).all_companies_wages()
+                                        EmpWageBuilder.print_wage_dict(employee_wages)
+                                        break
+                            else:
+                                print("Employee not found.")
+                                continue
+                        else:
+                            print("Company not found")
+                            continue
+                else:
+                    print("Enter a valid number.")  # Print message for invalid deletion type
+                
+                # Print updated details
+
+            
+            except Exception as e:
+                print(f"Error: {e}")  # Print error message if any exception occurs
+
+        elif operation == 3:
+            # Updating company or employee details
+            update = input("Enter 1 to update Company and 2 to update Employee name: ")  # Input to choose update type
+            
+            if update == "1":
+                # Update company details
+                company_name = input("Enter Company name to update: ")  # Input for company name
+                
+                if company_name in all_company_emp_details:
+                    try:
+                        emp_per_hrs = int(input("Enter new employee wages per hr: "))  # Input for new wages per hour
+                        
+                        # Update the wages for all employees in this company
+                        for employee in all_company_emp_details[company_name]:
+                            employee["wages_per_hrs"] = emp_per_hrs
+                        print("Company wages updated.")  # Print confirmation message
+                        
+                        # Update argument list
+                        for company in argument:
+                            if company[5] == company_name:
+                                company[2] = emp_per_hrs  # Update wages in argument list
+                        argument = unique(argument)  # Remove duplicate entries
+                        employee_wages = EmpWageBuilder(argument).all_companies_wages()
+                        EmpWageBuilder.print_wage_dict(employee_wages)
+                    except ValueError:
+                        print("Enter a valid number.")  # Print message for invalid number
+                else:
+                    print("Company not found.")  # Print message if company is not found
+            
+            elif update == "2":
+                # Update employee name
+                company_name = input("Enter Company name to update employee: ")  # Input for company name
+                
+                if company_name in all_company_emp_details:
+                    old_name = input("Enter current employee name: ")  # Input for current employee name
+                    new_name = input("Enter new employee name: ")  # Input for new employee name
+                    
+                    found = False
+                    for employee in all_company_emp_details[company_name]:
+                        if employee["Name"] == old_name:
+                            employee["Name"] = new_name  # Update employee name in the dictionary
+                            found = True
+                            break
+                    
+                    if found:
+                        print("Employee name updated.")  # Print confirmation message
+                        # Update argument list
+                        for company in argument:
+                            if company[5] == company_name:
+                                try:
+                                    index = company[6].index(old_name)  # Find index of old name
+                                    company[6][index] = new_name  # Update name in argument list
+                                except ValueError:
+                                    pass
+                        argument = unique(argument)  # Remove duplicate entries
+                        employee_wages = EmpWageBuilder(argument).all_companies_wages()
+                        EmpWageBuilder.print_wage_dict(employee_wages)
+                    else:
+                        print("Employee not found.")  # Print message if employee is not found
+                else:
+                    print("Company not found.")  # Print message if company is not found
+
+        elif operation == 4:
+            exit = False  # Set exit flag to False to terminate the loop
+
 
     
 # If this script is run as the main module, execute the main function
