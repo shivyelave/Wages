@@ -360,10 +360,13 @@ def main():
                 }
                 all_emp_details.append(emp_details)  # Add employee details to the list
                 existing_employees.add(employee_name.lower())  # Add employee name to the set (converted to lowercase for consistency)
+                
+                company_name_lower = company_name.lower()
+                companies_name_lower = {key.lower(): key for key in all_company_emp_details.keys()}
 
             # Add the company's employee details to the main dictionary
-            if company_name in all_company_emp_details:
-                all_company_emp_details[company_name].extend(all_emp_details)  # Extend existing list if company exists
+            if company_name_lower in companies_name_lower:
+                all_company_emp_details[company_name_lower].extend(all_emp_details)  # Extend existing list if company exists
             else:
                 all_company_emp_details[company_name] = all_emp_details  # Add new entry for new company
 
@@ -387,6 +390,9 @@ def main():
 
         elif operation == 2:
             # Deleting company or employee
+            if len(all_company_emp_details) == 0:
+                print("Number of company is zero.First add new company.")
+                continue
             try:
                 delete = int(input("Enter 1 to delete company and 2 to delete employee: "))  # Input to choose deletion type
                 company_name = input("Enter Company name to delete: ")  # Input for company name
@@ -432,6 +438,9 @@ def main():
 
         elif operation == 3:
             # Updating company or employee details
+            if len(all_company_emp_details) == 0:
+                print("Number of company is zero.First add new company.")
+                continue
             update = input("Enter 1 to update Company and 2 to update Employee name: ")  # Input to choose update type
             
             if update == "1":
