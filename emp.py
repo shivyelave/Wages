@@ -143,7 +143,7 @@ class Employee_monthly_wage:
         curr_day = 0      # Initialize index for the current day in the month_wages list
         
         # Iterate through each day of the month and calculate the wage for that day
-        while day < self.total_working_days and hrs < self.total_working_hrs:  # Continue until either the number of days reaches 'total_working_days' or total hours reach 'total_working_hrs'
+        while (day < self.total_working_days) and (hrs < self.total_working_hrs):  # Continue until either the number of days reaches 'total_working_days' or total hours reach 'total_working_hrs'
             month_wages.append(self.each_day_wage())  # Append the wage of each day to the list
             
             if month_wages[curr_day] == 0:
@@ -240,7 +240,9 @@ class EmpWageBuilder():
                 print(f"    Attendance:")
                 print(f"        Leaves: {work_details[0]}")
                 print(f"        Full Day: {work_details[1]}")
-                print(f"        Half Day: {work_details[2]}\n")
+                print(f"        Half Day: {work_details[2]}")
+                print(f"        Total worked hrs: {work_details[1]*8+work_details[2]*4}\n")
+                
                 total_sum += sum(multiple_companies_wages[key][emp_key])
             print(f"{key} total wage is {total_sum}\n\n")
 
@@ -503,8 +505,6 @@ def main():
 
         elif operation == 4:
             exit = False  # Set exit flag to False to terminate the loop
-
-
     
 # If this script is run as the main module, execute the main function
 if __name__ == '__main__':
